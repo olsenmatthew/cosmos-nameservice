@@ -10,7 +10,7 @@ import (
 	"github.com/olsenmatthew/cosmos-nameservice/x/bank"
 	"github.com/olsenmatthew/cosmos-nameservice/x/params"
 	"github.com/olsenmatthew/cosmos-nameservice/x/staking"
-	"github.com/olsenmatthew/sdk-application-tutorial/x/nameservice"
+	"github.com/cosmos/sdk-application-tutorial/x/nameservice"
 
 	bam "github.com/olsenmatthew/cosmos-nameservice/baseapp"
 	sdk "github.com/olsenmatthew/cosmos-nameservice/types"

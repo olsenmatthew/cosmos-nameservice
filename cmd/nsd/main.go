@@ -23,7 +23,7 @@ import (
 
 	gaiaInit "github.com/olsenmatthew/cosmos-nameservice/cmd/gaia/init"
 	sdk "github.com/olsenmatthew/cosmos-nameservice/types"
-	app "github.com/olsenmatthew/sdk-application-tutorial"
+	app "github.com/cosmos/sdk-application-tutorial"
 	abci "github.com/tendermint/tendermint/abci/types"
 	cfg "github.com/tendermint/tendermint/config"
 	dbm "github.com/tendermint/tendermint/libs/db"

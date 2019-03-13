@@ -6,7 +6,7 @@ import (
 	"github.com/olsenmatthew/cosmos-nameservice/client/context"
 	"github.com/olsenmatthew/cosmos-nameservice/client/utils"
 	"github.com/olsenmatthew/cosmos-nameservice/codec"
-	"github.com/olsenmatthew/sdk-application-tutorial/x/nameservice"
+	"github.com/cosmos/sdk-application-tutorial/x/nameservice"
 
 	sdk "github.com/olsenmatthew/cosmos-nameservice/types"
 	authtxb "github.com/olsenmatthew/cosmos-nameservice/x/auth/client/txbuilder"
