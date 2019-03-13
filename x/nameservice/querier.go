@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/olsenmatthew/cosmos-namespace/codec"
+	"github.com/olsenmatthew/cosmos-nameservice/codec"
 
-	sdk "github.com/olsenmatthew/cosmos-namespace/types"
+	sdk "github.com/olsenmatthew/cosmos-nameservice/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 

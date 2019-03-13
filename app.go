@@ -5,15 +5,15 @@ import (
 
 	"github.com/tendermint/tendermint/libs/log"
 
-	"github.com/olsenmatthew/cosmos-namespace/codec"
-	"github.com/olsenmatthew/cosmos-namespace/x/auth"
-	"github.com/olsenmatthew/cosmos-namespace/x/bank"
-	"github.com/olsenmatthew/cosmos-namespace/x/params"
-	"github.com/olsenmatthew/cosmos-namespace/x/staking"
+	"github.com/olsenmatthew/cosmos-nameservice/codec"
+	"github.com/olsenmatthew/cosmos-nameservice/x/auth"
+	"github.com/olsenmatthew/cosmos-nameservice/x/bank"
+	"github.com/olsenmatthew/cosmos-nameservice/x/params"
+	"github.com/olsenmatthew/cosmos-nameservice/x/staking"
 	"github.com/olsenmatthew/sdk-application-tutorial/x/nameservice"
 
-	bam "github.com/olsenmatthew/cosmos-namespace/baseapp"
-	sdk "github.com/olsenmatthew/cosmos-namespace/types"
+	bam "github.com/olsenmatthew/cosmos-nameservice/baseapp"
+	sdk "github.com/olsenmatthew/cosmos-nameservice/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 	cmn "github.com/tendermint/tendermint/libs/common"
 	dbm "github.com/tendermint/tendermint/libs/db"

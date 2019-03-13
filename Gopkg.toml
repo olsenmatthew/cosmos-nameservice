@@ -25,7 +25,7 @@
 #   unused-packages = true
 
 [[constraint]]
-  name = "github.com/olsenmatthew/cosmos-namespace"
+  name = "github.com/olsenmatthew/cosmos-nameservice"
   #version = "v0.31.1"
 
 [[override]]

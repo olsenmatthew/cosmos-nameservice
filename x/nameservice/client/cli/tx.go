@@ -3,13 +3,13 @@ package cli
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/olsenmatthew/cosmos-namespace/client/context"
-	"github.com/olsenmatthew/cosmos-namespace/client/utils"
-	"github.com/olsenmatthew/cosmos-namespace/codec"
+	"github.com/olsenmatthew/cosmos-nameservice/client/context"
+	"github.com/olsenmatthew/cosmos-nameservice/client/utils"
+	"github.com/olsenmatthew/cosmos-nameservice/codec"
 	"github.com/olsenmatthew/sdk-application-tutorial/x/nameservice"
 
-	sdk "github.com/olsenmatthew/cosmos-namespace/types"
-	authtxb "github.com/olsenmatthew/cosmos-namespace/x/auth/client/txbuilder"
+	sdk "github.com/olsenmatthew/cosmos-nameservice/types"
+	authtxb "github.com/olsenmatthew/cosmos-nameservice/x/auth/client/txbuilder"
 )
 
 // GetCmdBuyName is the CLI command for sending a buyname transaction

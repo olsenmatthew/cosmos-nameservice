@@ -3,8 +3,8 @@ package cli
 import (
 	"fmt"
 
-	"github.com/olsenmatthew/cosmos-namespace/client/context"
-	"github.com/olsenmatthew/cosmos-namespace/codec"
+	"github.com/olsenmatthew/cosmos-nameservice/client/context"
+	"github.com/olsenmatthew/cosmos-nameservice/codec"
 	"github.com/olsenmatthew/sdk-application-tutorial/x/nameservice"
 	"github.com/spf13/cobra"
 )

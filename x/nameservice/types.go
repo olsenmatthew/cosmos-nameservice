@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	sdk "github.com/olsenmatthew/cosmos-namespace/types"
+	sdk "github.com/olsenmatthew/cosmos-nameservice/types"
 )
 
 // whois is a struct that contains all the metadata of a name

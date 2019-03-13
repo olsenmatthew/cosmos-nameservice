@@ -1,7 +1,7 @@
 package nameservice
 
 import (
-	"github.com/olsenmatthew/cosmos-namespace/codec"
+	"github.com/olsenmatthew/cosmos-nameservice/codec"
 )
 
 //RegisterCodec registers concrete types on wire codec

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/olsenmatthew/cosmos-namespace/client/context"
-	clientrest "github.com/olsenmatthew/cosmos-namespace/client/rest"
-	"github.com/olsenmatthew/cosmos-namespace/codec"
-	sdk "github.com/olsenmatthew/cosmos-namespace/types"
-	"github.com/olsenmatthew/cosmos-namespace/types/rest"
+	"github.com/olsenmatthew/cosmos-nameservice/client/context"
+	clientrest "github.com/olsenmatthew/cosmos-nameservice/client/rest"
+	"github.com/olsenmatthew/cosmos-nameservice/codec"
+	sdk "github.com/olsenmatthew/cosmos-nameservice/types"
+	"github.com/olsenmatthew/cosmos-nameservice/types/rest"
 	"github.com/olsenmatthew/sdk-application-tutorial/x/nameservice"
 
 	"github.com/gorilla/mux"

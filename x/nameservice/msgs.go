@@ -3,7 +3,7 @@ package namservice
 import (
 	"encoding/json"
 
-	sdk "github.com/osmos/cosmos-namespace/types"
+	sdk "github.com/osmos/cosmos-nameservice/types"
 )
 
 // MsgSetName defines a SetName message
