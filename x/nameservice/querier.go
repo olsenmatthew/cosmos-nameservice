@@ -7,7 +7,7 @@ import (
 	"github.com/olsenmatthew/cosmos-namespace/codec"
 
 	sdk "github.com/olsenmatthew/cosmos-namespace/types"
-	abci "gitbub.com/tendermint/tendermint/abci/types"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 const (
