@@ -9,11 +9,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/olsenmatthew/cosmos-nameservice/client"
-	"github.com/olsenmatthew/cosmos-nameservice/codec"
-	"github.com/olsenmatthew/cosmos-nameservice/server"
-	"github.com/olsenmatthew/cosmos-nameservice/x/auth"
-	"github.com/olsenmatthew/cosmos-nameservice/x/bank"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/server"
+	"github.com/cosmos/cosmos-sdk/x/auth"
+	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/tendermint/tendermint/crypto"
@@ -21,8 +21,8 @@ import (
 	"github.com/tendermint/tendermint/libs/common"
 	"github.com/tendermint/tendermint/libs/log"
 
-	gaiaInit "github.com/olsenmatthew/cosmos-nameservice/cmd/gaia/init"
-	sdk "github.com/olsenmatthew/cosmos-nameservice/types"
+	gaiaInit "github.com/cosmos/cosmos-sdk/cmd/gaia/init"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	app "github.com/cosmos/sdk-application-tutorial"
 	abci "github.com/tendermint/tendermint/abci/types"
 	cfg "github.com/tendermint/tendermint/config"
@@ -30,7 +30,7 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
-// DefaultNodeHome sets the folder where the application data and configuration will be stored
+// DefaultNodeHome sets the folder where the applcation data and configuration will be stored
 var DefaultNodeHome = os.ExpandEnv("$HOME/.nsd")
 
 const (
@@ -43,10 +43,10 @@ func main() {
 	cdc := app.MakeCodec()
 	ctx := server.NewDefaultContext()
 
-	rootCmd := &cobra.Command {
-		Use: "nsd",
-		Short: "nameservice App Daemon (server)",
-		PersistentPreRunE: server.PersistentPreRunE(ctx),
+	rootCmd := &cobra.Command{
+		Use:               "nsd",
+		Short:             "nameservice App Daemon (server)",
+		PersistentPreRunE: server.PersistentPreRunEFn(ctx),
 	}
 
 	rootCmd.AddCommand(InitCmd(ctx, cdc))
@@ -58,10 +58,9 @@ func main() {
 	executor := cli.PrepareBaseCmd(rootCmd, "NS", DefaultNodeHome)
 	err := executor.Execute()
 	if err != nil {
-		// handler with #870
+		// handle with #870
 		panic(err)
 	}
-
 }
 
 func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application {
@@ -78,16 +77,16 @@ func appExporter() server.AppExporter {
 
 // InitCmd initializes all files for tendermint and application
 func InitCmd(ctx *server.Context, cdc *codec.Codec) *cobra.Command {
-	cmd := &cobra.Command {
-		Use: "init",
+	cmd := &cobra.Command{
+		Use:   "init",
 		Short: "Initialize genesis config, priv-validator file, and p2p-node file",
-		Args: cobra.NoArgs,
+		Args:  cobra.NoArgs,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			config := ctx.Config
 			config.SetRoot(viper.GetString(cli.HomeFlag))
 
 			chainID := viper.GetString(client.FlagChainID)
-			if chainID=="" {
+			if chainID == "" {
 				chainID = fmt.Sprintf("test-chain-%v", common.RandStr(6))
 			}
 
@@ -100,10 +99,10 @@ func InitCmd(ctx *server.Context, cdc *codec.Codec) *cobra.Command {
 			genFile := config.GenesisFile()
 
 			if !viper.GetBool(flagOverwrite) && common.FileExists(genFile) {
-				return fmt.Errorf("gensis.json file already exists: %v", genFile)
+				return fmt.Errorf("genesis.json file already exists: %v", genFile)
 			}
 
-			genesis := app.GenesisState {
+			genesis := app.GenesisState{
 				AuthData: auth.DefaultGenesisState(),
 				BankData: bank.DefaultGenesisState(),
 			}
@@ -113,12 +112,12 @@ func InitCmd(ctx *server.Context, cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			_, _, validator, err := SimpleAppGentx(cdc, pk)
+			_, _, validator, err := SimpleAppGenTx(cdc, pk)
 			if err != nil {
 				return err
 			}
 
-			if err = gaiaInit.ExportGenesisFile(genFile, chainID, []tmtypes.GenesisValidator{validator}, appstate); err != nil {
+			if err = gaiaInit.ExportGenesisFile(genFile, chainID, []tmtypes.GenesisValidator{validator}, appState); err != nil {
 				return err
 			}
 
@@ -129,24 +128,24 @@ func InitCmd(ctx *server.Context, cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flag().String(cli.HomeFlag, DefaultNodeHome, "node's home directory")
+	cmd.Flags().String(cli.HomeFlag, DefaultNodeHome, "node's home directory")
 	cmd.Flags().String(client.FlagChainID, "", "genesis file chain-id, if left blank will be randomly created")
 	cmd.Flags().BoolP(flagOverwrite, "o", false, "overwrite the genesis.json file")
 
 	return cmd
 }
 
-// AddGeneisAccountCmd allows users to add accounts to the genesis file
+// AddGenesisAccountCmd allows users to add accounts to the genesis file
 func AddGenesisAccountCmd(ctx *server.Context, cdc *codec.Codec) *cobra.Command {
-	cmd := &cobra.Command {
-		Use: "add-genesis-account [address] [coins[,coins]]",
+	cmd := &cobra.Command{
+		Use:   "add-genesis-account [address] [coins[,coins]]",
 		Short: "Adds an account to the genesis file",
-		Args: cobra.ExectArgs(2),
+		Args:  cobra.ExactArgs(2),
 		Long: strings.TrimSpace(`
-			Adds accounts to the genesis file so that you can start a chain with coins in the CLI:
+Adds accounts to the genesis file so that you can start a chain with coins in the CLI:
 
-			$ nsd add-genesis-account cosmos1tse7r2fadvlrrgau3pa0ss7cqh55wrv6y9alwh 1000STAKE,1000nametoken
-			`),
+$ nsd add-genesis-account cosmos1tse7r2fadvlrrgau3pa0ss7cqh55wrv6y9alwh 1000STAKE,1000nametoken
+`),
 		RunE: func(_ *cobra.Command, args []string) error {
 			addr, err := sdk.AccAddressFromBech32(args[0])
 			if err != nil {
@@ -197,8 +196,8 @@ func AddGenesisAccountCmd(ctx *server.Context, cdc *codec.Codec) *cobra.Command 
 	return cmd
 }
 
-// SimpleAppGentx returns a simple GenTx command that makes the node a validator from the start
-func SimpleAppGentx(cdc *codec.Codec, pk crypto.PubKey) (
+// SimpleAppGenTx returns a simple GenTx command that makes the node a valdiator from the start
+func SimpleAppGenTx(cdc *codec.Codec, pk crypto.PubKey) (
 	appGenTx, cliPrint json.RawMessage, validator tmtypes.GenesisValidator, err error) {
 
 	addr, secret, err := server.GenerateCoinKey()
@@ -215,18 +214,17 @@ func SimpleAppGentx(cdc *codec.Codec, pk crypto.PubKey) (
 
 	appGenTx = json.RawMessage(bz)
 
-	bz, err = cdc.MarshalJSON(map[string]string{"secret":secret})
+	bz, err = cdc.MarshalJSON(map[string]string{"secret": secret})
 	if err != nil {
 		return
 	}
 
 	cliPrint = json.RawMessage(bz)
 
-	validator = tmtypes.GenesisValidator {
+	validator = tmtypes.GenesisValidator{
 		PubKey: pk,
-		Power: 10,
+		Power:  10,
 	}
 
 	return
-
 }

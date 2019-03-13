@@ -4,16 +4,17 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/olsenmatthew/cosmos-nameservice/codec"
+	"github.com/cosmos/cosmos-sdk/codec"
 
-	sdk "github.com/olsenmatthew/cosmos-nameservice/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
+// query endpoints supported by the nameservice Querier
 const (
 	QueryResolve = "resolve"
-	QueryWhois = "whois"
-	QueryNames = "names"
+	QueryWhois   = "whois"
+	QueryNames   = "names"
 )
 
 // NewQuerier is the module level router for state queries
@@ -39,7 +40,7 @@ func queryResolve(ctx sdk.Context, path []string, req abci.RequestQuery, keeper 
 	value := keeper.ResolveName(ctx, name)
 
 	if value == "" {
-		return []byte{}, sdk.ErrUnknownRequest("ould not resolve name")
+		return []byte{}, sdk.ErrUnknownRequest("could not resolve name")
 	}
 
 	bz, err2 := codec.MarshalJSONIndent(keeper.cdc, QueryResResolve{value})
@@ -48,14 +49,12 @@ func queryResolve(ctx sdk.Context, path []string, req abci.RequestQuery, keeper 
 	}
 
 	return bz, nil
-
 }
 
 // Query Result Payload for a resolve query
 type QueryResResolve struct {
 	Value string `json:"value"`
 }
-
 
 // implement fmt.Stringer
 func (r QueryResResolve) String() string {
@@ -74,14 +73,13 @@ func queryWhois(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Ke
 	}
 
 	return bz, nil
-
 }
 
 // implement fmt.Stringer
-func(w Whois) String() string {
+func (w Whois) String() string {
 	return strings.TrimSpace(fmt.Sprintf(`Owner: %s
-		Value: %s
-		Price: %s`, w.Owner, w.Value, w.Price))
+Value: %s
+Price: %s`, w.Owner, w.Value, w.Price))
 }
 
 func queryNames(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
@@ -89,7 +87,7 @@ func queryNames(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []by
 
 	iterator := keeper.GetNamesIterator(ctx)
 
-	for ; iterator.Valid(); iterator.next() {
+	for ; iterator.Valid(); iterator.Next() {
 		name := string(iterator.Key())
 		namesList = append(namesList, name)
 	}
@@ -100,7 +98,6 @@ func queryNames(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []by
 	}
 
 	return bz, nil
-
 }
 
 // Query Result Payload for a names query

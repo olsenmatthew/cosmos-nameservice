@@ -5,15 +5,15 @@ import (
 
 	"github.com/tendermint/tendermint/libs/log"
 
-	"github.com/olsenmatthew/cosmos-nameservice/codec"
-	"github.com/olsenmatthew/cosmos-nameservice/x/auth"
-	"github.com/olsenmatthew/cosmos-nameservice/x/bank"
-	"github.com/olsenmatthew/cosmos-nameservice/x/params"
-	"github.com/olsenmatthew/cosmos-nameservice/x/staking"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/x/auth"
+	"github.com/cosmos/cosmos-sdk/x/bank"
+	"github.com/cosmos/cosmos-sdk/x/params"
+	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/sdk-application-tutorial/x/nameservice"
 
-	bam "github.com/olsenmatthew/cosmos-nameservice/baseapp"
-	sdk "github.com/olsenmatthew/cosmos-nameservice/types"
+	bam "github.com/cosmos/cosmos-sdk/baseapp"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 	cmn "github.com/tendermint/tendermint/libs/common"
 	dbm "github.com/tendermint/tendermint/libs/db"
@@ -28,18 +28,18 @@ type nameServiceApp struct {
 	*bam.BaseApp
 	cdc *codec.Codec
 
-	keyMain	*sdk.KVStoreKey
-	keyAccount *sdk.KVStoreKey
-	keyNS *sdk.KVStoreKey
+	keyMain          *sdk.KVStoreKey
+	keyAccount       *sdk.KVStoreKey
+	keyNS            *sdk.KVStoreKey
 	keyFeeCollection *sdk.KVStoreKey
-	keyParams *sdk.KVStoreKey
-	tkeyParams *sdk.TransientStoreKey
+	keyParams        *sdk.KVStoreKey
+	tkeyParams       *sdk.TransientStoreKey
 
-	accountKeeper	auth.accountKeeper
-	bankKeeper	bank.Keeper
+	accountKeeper       auth.AccountKeeper
+	bankKeeper          bank.Keeper
 	feeCollectionKeeper auth.FeeCollectionKeeper
-	paramsKeeper params.Keeper
-	nsKeeper nameservice.Keeper
+	paramsKeeper        params.Keeper
+	nsKeeper            nameservice.Keeper
 }
 
 // NewNameServiceApp is a constructor function for nameServiceApp
@@ -126,10 +126,11 @@ func NewNameServiceApp(logger log.Logger, db dbm.DB) *nameServiceApp {
 	return app
 }
 
+// GenesisState represents chain state at the start of the chain. Any initial state (account balances) are stored here.
 type GenesisState struct {
-	AuthData auth.GenesisState `json:"auth"`
-	BankData bank.GenesisState `json:"bank"`
-	Accounts []*auth.BaseAccount `json:"acconets"`
+	AuthData auth.GenesisState   `json:"auth"`
+	BankData bank.GenesisState   `json:"bank"`
+	Accounts []*auth.BaseAccount `json:"accounts"`
 }
 
 func (app *nameServiceApp) initChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
@@ -142,7 +143,7 @@ func (app *nameServiceApp) initChainer(ctx sdk.Context, req abci.RequestInitChai
 	}
 
 	for _, acc := range genesisState.Accounts {
-		ac.AccountNumber = app.accountKeeper.GetNextAccountNumber(ctx)
+		acc.AccountNumber = app.accountKeeper.GetNextAccountNumber(ctx)
 		app.accountKeeper.SetAccount(ctx, acc)
 	}
 
@@ -150,30 +151,28 @@ func (app *nameServiceApp) initChainer(ctx sdk.Context, req abci.RequestInitChai
 	bank.InitGenesis(ctx, app.bankKeeper, genesisState.BankData)
 
 	return abci.ResponseInitChain{}
-
 }
 
 // ExportAppStateAndValidators does the things
-func (app *nameServiceApp) ExportAppStateAndValidators () (appState json.RawMessage, validators [] tmtypes.GenesisValidator, err error) {
+func (app *nameServiceApp) ExportAppStateAndValidators() (appState json.RawMessage, validators []tmtypes.GenesisValidator, err error) {
 	ctx := app.NewContext(true, abci.Header{})
 	accounts := []*auth.BaseAccount{}
 
 	appendAccountsFn := func(acc auth.Account) bool {
-		account := &auth.BaseAccount {
+		account := &auth.BaseAccount{
 			Address: acc.GetAddress(),
-			Coins: acc.GetCoins(),
+			Coins:   acc.GetCoins(),
 		}
 
 		accounts = append(accounts, account)
 		return false
-
 	}
 
 	app.accountKeeper.IterateAccounts(ctx, appendAccountsFn)
 
-	genState := GenesisState {
-		Account: accounts,
-		AuthData: auth,DefaultGenesisState(),
+	genState := GenesisState{
+		Accounts: accounts,
+		AuthData: auth.DefaultGenesisState(),
 		BankData: bank.DefaultGenesisState(),
 	}
 
@@ -183,10 +182,9 @@ func (app *nameServiceApp) ExportAppStateAndValidators () (appState json.RawMess
 	}
 
 	return appState, validators, err
-
 }
 
-// MakeCodec generates the neccessary codecs for Amino
+// MakeCodec generates the necessary codecs for Amino
 func MakeCodec() *codec.Codec {
 	var cdc = codec.New()
 	auth.RegisterCodec(cdc)

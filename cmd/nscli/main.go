@@ -4,30 +4,30 @@ import (
 	"os"
 	"path"
 
-	"github.com/olsenmatthew/cosmos-nameservice/client"
-	"github.com/olsenmatthew/cosmos-nameservice/client/keys"
-	"github.com/olsenmatthew/cosmos-nameservice/client/lcd"
-	"github.com/olsenmatthew/cosmos-nameservice/client/rpc"
-	"github.com/olsenmatthew/cosmos-nameservice/client/tx"
-	"github.com/olsenmatthew/cosmos-nameservice/version"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/keys"
+	"github.com/cosmos/cosmos-sdk/client/lcd"
+	"github.com/cosmos/cosmos-sdk/client/rpc"
+	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	amino "github.com/tendermint/go-amino"
 	"github.com/tendermint/tendermint/libs/cli"
 
-	sdk "github.com/olsenmatthew/cosmos-nameservice/types"
-	authcmd "github.com/olsenmatthew/cosmos-nameservice/x/auth/client/cli"
-	auth "github.com/olsenmatthew/cosmos-nameservice/x/auth/client/rest"
-	bankcmd "github.com/olsenmatthew/cosmos-nameservice/x/bank/client/cli"
-	bank "github.com/olsenmatthew/cosmos-nameservice/x/bank/client/rest"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
+	auth "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
+	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
+	bank "github.com/cosmos/cosmos-sdk/x/bank/client/rest"
 	app "github.com/cosmos/sdk-application-tutorial"
 	nsclient "github.com/cosmos/sdk-application-tutorial/x/nameservice/client"
 	nsrest "github.com/cosmos/sdk-application-tutorial/x/nameservice/client/rest"
 )
 
 const (
-	storeAcc = "Acc"
-	storeNS = "nameservice"
+	storeAcc = "acc"
+	storeNS  = "nameservice"
 )
 
 var defaultCLIHome = os.ExpandEnv("$HOME/.nscli")
@@ -40,26 +40,26 @@ func main() {
 	// Read in the configuration file for the sdk
 	config := sdk.GetConfig()
 	config.SetBech32PrefixForAccount(sdk.Bech32PrefixAccAddr, sdk.Bech32PrefixAccPub)
-	config.SetBechPrefixForValidator(sdk.Bech32PrefixValAddr, sdk.Bech32PrefixValPub)
-	config.SetBech32PrefixForConcensusNode(sdk.Bech32PrefixConsAddr, sdk.Bech32PrefixConsPub)
+	config.SetBech32PrefixForValidator(sdk.Bech32PrefixValAddr, sdk.Bech32PrefixValPub)
+	config.SetBech32PrefixForConsensusNode(sdk.Bech32PrefixConsAddr, sdk.Bech32PrefixConsPub)
 	config.Seal()
 
-	mc := []sdk.ModuleClients {
-		nsclient.NewModuleClient(storeNS, cdc)
+	mc := []sdk.ModuleClients{
+		nsclient.NewModuleClient(storeNS, cdc),
 	}
 
-	rootCmd := &cobra.Command {
-		Use: "nscli",
+	rootCmd := &cobra.Command{
+		Use:   "nscli",
 		Short: "nameservice Client",
 	}
 
 	// Add --chain-id to persistent flags and mark it required
 	rootCmd.PersistentFlags().String(client.FlagChainID, "", "Chain ID of tendermint node")
-	rootCmd..PersistentPreRunE = func(_ *cobra.Command, _ []string) error {
+	rootCmd.PersistentPreRunE = func(_ *cobra.Command, _ []string) error {
 		return initConfig(rootCmd)
 	}
 
-	//Construct Root Command
+	// Construct Root Command
 	rootCmd.AddCommand(
 		rpc.StatusCommand(),
 		client.ConfigCmd(defaultCLIHome),
@@ -91,10 +91,10 @@ func registerRoutes(rs *lcd.RestServer) {
 }
 
 func queryCmd(cdc *amino.Codec, mc []sdk.ModuleClients) *cobra.Command {
-	queryCmd := &cobra.Command {
-		Use: "query",
+	queryCmd := &cobra.Command{
+		Use:     "query",
 		Aliases: []string{"q"},
-		Short: "Querying subcommands",
+		Short:   "Querying subcommands",
 	}
 
 	queryCmd.AddCommand(
@@ -114,8 +114,8 @@ func queryCmd(cdc *amino.Codec, mc []sdk.ModuleClients) *cobra.Command {
 }
 
 func txCmd(cdc *amino.Codec, mc []sdk.ModuleClients) *cobra.Command {
-	txCmd := &cobra.Command {
-		Use: "tx",
+	txCmd := &cobra.Command{
+		Use:   "tx",
 		Short: "Transactions subcommands",
 	}
 
@@ -132,7 +132,6 @@ func txCmd(cdc *amino.Codec, mc []sdk.ModuleClients) *cobra.Command {
 	}
 
 	return txCmd
-
 }
 
 func initConfig(cmd *cobra.Command) error {
@@ -144,6 +143,7 @@ func initConfig(cmd *cobra.Command) error {
 	cfgFile := path.Join(home, "config", "config.toml")
 	if _, err := os.Stat(cfgFile); err == nil {
 		viper.SetConfigFile(cfgFile)
+
 		if err := viper.ReadInConfig(); err != nil {
 			return err
 		}
@@ -151,11 +151,8 @@ func initConfig(cmd *cobra.Command) error {
 	if err := viper.BindPFlag(client.FlagChainID, cmd.PersistentFlags().Lookup(client.FlagChainID)); err != nil {
 		return err
 	}
-
-	if err := ciper.BindPFlag(cli.EncodingFlag, cmd.PersistentFlags().Lookup(cli.EncodingFlag)); err != nil {
+	if err := viper.BindPFlag(cli.EncodingFlag, cmd.PersistentFlags().Lookup(cli.EncodingFlag)); err != nil {
 		return err
 	}
-
 	return viper.BindPFlag(cli.OutputFlag, cmd.PersistentFlags().Lookup(cli.OutputFlag))
-
 }

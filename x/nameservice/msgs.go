@@ -1,32 +1,32 @@
-package namservice
+package nameservice
 
 import (
 	"encoding/json"
 
-	sdk "github.com/olsenmatthew/cosmos-nameservice/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // MsgSetName defines a SetName message
 type MsgSetName struct {
-	Name string
+	Name  string
 	Value string
 	Owner sdk.AccAddress
 }
 
-//NewMsgSetName is a constructor function for MsgSetName
+// NewMsgSetName is a constructor function for MsgSetName
 func NewMsgSetName(name string, value string, owner sdk.AccAddress) MsgSetName {
-	return MsgSetName {
-		Name: name,
+	return MsgSetName{
+		Name:  name,
 		Value: value,
 		Owner: owner,
 	}
 }
 
-//Route should return the name of the module
-func (msg MsgSetName) Route() string {return "nameservice"}
+// Route should return the name of the module
+func (msg MsgSetName) Route() string { return "nameservice" }
 
 // Type should return the action
-func (msg MsgSetName) Type() string {return "set_name"}
+func (msg MsgSetName) Type() string { return "set_name" }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgSetName) ValidateBasic() sdk.Error {
@@ -55,25 +55,25 @@ func (msg MsgSetName) GetSigners() []sdk.AccAddress {
 
 // MsgBuyName defines the BuyName message
 type MsgBuyName struct {
-	Name string
-	Bid sdk.Coins
+	Name  string
+	Bid   sdk.Coins
 	Buyer sdk.AccAddress
 }
 
 // NewMsgBuyName is the constructor function for MsgBuyName
 func NewMsgBuyName(name string, bid sdk.Coins, buyer sdk.AccAddress) MsgBuyName {
-	return MsgBuyName {
-		Name: name,
-		Bid: bid,
+	return MsgBuyName{
+		Name:  name,
+		Bid:   bid,
 		Buyer: buyer,
 	}
 }
 
 // Route should return the name of the module
-func (msg MsgBuyName) Route() string {return "nameservice"}
+func (msg MsgBuyName) Route() string { return "nameservice" }
 
-// Type should return the Action
-func (msg MsgBuyName) Type() string {return "buy_name"}
+// Type should return the action
+func (msg MsgBuyName) Type() string { return "buy_name" }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgBuyName) ValidateBasic() sdk.Error {
@@ -84,7 +84,7 @@ func (msg MsgBuyName) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Name cannot be empty")
 	}
 	if !msg.Bid.IsAllPositive() {
-		return sdl.ErrInsufficientCoins("Bids must be positive")
+		return sdk.ErrInsufficientCoins("Bids must be positive")
 	}
 	return nil
 }
@@ -98,7 +98,7 @@ func (msg MsgBuyName) GetSignBytes() []byte {
 	return sdk.MustSortJSON(b)
 }
 
-// GetSigners defines whos signature is required
+// GetSigners defines whose signature is required
 func (msg MsgBuyName) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAccess{msg.Buyer}
+	return []sdk.AccAddress{msg.Buyer}
 }

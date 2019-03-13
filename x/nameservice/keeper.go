@@ -1,32 +1,31 @@
 package nameservice
 
 import (
-	"github.com/olsenmatthew/cosmos-nameservice/codec"
-	"github.com/olsenmatthew/cosmos-nameservice/x/bank"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/x/bank"
 
-	sdk "github.com/olsenmatthew/cosmos-nameservice/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
-
+// Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
 	coinKeeper bank.Keeper
 
-	storeKey sdk.StoreKey // unexposed key to access store from sdk.Context
+	storeKey sdk.StoreKey // Unexposed key to access store from sdk.Context
 
-	cdc *codec.Codec // the wire codec for binary encoding/decoding
+	cdc *codec.Codec // The wire codec for binary encoding/decoding.
 }
 
-// sets the entire Whois metadata struct for a name
-func (k Keeper) SetWhois(ctx sdk.Context, name string, whois Whois) {
-	if whois.Owner.Empty() {
-		return
+// NewKeeper creates new instances of the nameservice Keeper
+func NewKeeper(coinKeeper bank.Keeper, storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
+	return Keeper{
+		coinKeeper: coinKeeper,
+		storeKey:   storeKey,
+		cdc:        cdc,
 	}
-	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(name), k.cdc.MustMarshallBinaryBare(whois))
 }
 
-// gets the entire Whois metadata struct for a name
+// Gets the entire Whois metadata struct for a name
 func (k Keeper) GetWhois(ctx sdk.Context, name string) Whois {
 	store := ctx.KVStore(k.storeKey)
 	if !store.Has([]byte(name)) {
@@ -38,7 +37,16 @@ func (k Keeper) GetWhois(ctx sdk.Context, name string) Whois {
 	return whois
 }
 
-// ResolveName - return the string that the name resolves to
+// Sets the entire Whois metadata struct for a name
+func (k Keeper) SetWhois(ctx sdk.Context, name string, whois Whois) {
+	if whois.Owner.Empty() {
+		return
+	}
+	store := ctx.KVStore(k.storeKey)
+	store.Set([]byte(name), k.cdc.MustMarshalBinaryBare(whois))
+}
+
+// ResolveName - returns the string that the name resolves to
 func (k Keeper) ResolveName(ctx sdk.Context, name string) string {
 	return k.GetWhois(ctx, name).Value
 }
@@ -50,12 +58,12 @@ func (k Keeper) SetName(ctx sdk.Context, name string, value string) {
 	k.SetWhois(ctx, name, whois)
 }
 
-// HasOwner - return whether or not the name already has an owner
+// HasOwner - returns whether or not the name already has an owner
 func (k Keeper) HasOwner(ctx sdk.Context, name string) bool {
 	return !k.GetWhois(ctx, name).Owner.Empty()
 }
 
-// GetOwner - get the owner of a current name
+// GetOwner - get the current owner of a name
 func (k Keeper) GetOwner(ctx sdk.Context, name string) sdk.AccAddress {
 	return k.GetWhois(ctx, name).Owner
 }
@@ -67,7 +75,7 @@ func (k Keeper) SetOwner(ctx sdk.Context, name string, owner sdk.AccAddress) {
 	k.SetWhois(ctx, name, whois)
 }
 
-// GetPrice - gets the current price of a name. if the price doesn't exist yet, set to 1nametoken
+// GetPrice - gets the current price of a name
 func (k Keeper) GetPrice(ctx sdk.Context, name string) sdk.Coins {
 	return k.GetWhois(ctx, name).Price
 }
@@ -79,17 +87,8 @@ func (k Keeper) SetPrice(ctx sdk.Context, name string, price sdk.Coins) {
 	k.SetWhois(ctx, name, whois)
 }
 
-// get an iterator over all names in which the keys and the names and the values are the whois
+// Get an iterator over all names in which the keys are the names and the values are the whois
 func (k Keeper) GetNamesIterator(ctx sdk.Context) sdk.Iterator {
 	store := ctx.KVStore(k.storeKey)
-	return sdk.KVStorePrefixIterator(store, []byte{})
-}
-
-// NewKeeper creates new instances of the nameservice Keeper
-func NewKeeper(coinKeeper bank.Keeper, storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
-	return Keeper {
-		coinKeeper: coinKeeper,
-		storeKey: storeKey,
-		cdc: cdc,
-	}
+	return sdk.KVStorePrefixIterator(store, nil)
 }

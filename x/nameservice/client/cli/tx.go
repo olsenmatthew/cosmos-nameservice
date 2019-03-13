@@ -3,32 +3,32 @@ package cli
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/olsenmatthew/cosmos-nameservice/client/context"
-	"github.com/olsenmatthew/cosmos-nameservice/client/utils"
-	"github.com/olsenmatthew/cosmos-nameservice/codec"
+	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client/utils"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/sdk-application-tutorial/x/nameservice"
 
-	sdk "github.com/olsenmatthew/cosmos-nameservice/types"
-	authtxb "github.com/olsenmatthew/cosmos-nameservice/x/auth/client/txbuilder"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtxb "github.com/cosmos/cosmos-sdk/x/auth/client/txbuilder"
 )
 
-// GetCmdBuyName is the CLI command for sending a buyname transaction
+// GetCmdBuyName is the CLI command for sending a BuyName transaction
 func GetCmdBuyName(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command {
-		Use: "buy-name [name][ammount]",
+	return &cobra.Command{
+		Use:   "buy-name [name] [amount]",
 		Short: "bid for existing name or claim new name",
-		Args: cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc).WithAccountDecoder(cdc)
 
-			txBldr := authtxb.NewTxBuilderFromCLI().WithTxEnvoder(utils.GetTxEncoder(cdc))
+			txBldr := authtxb.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			if err := cliCtx.EnsureAccountExists(); err != nil {
 				return err
 			}
 
 			coins, err := sdk.ParseCoins(args[1])
-			if err != nill {
+			if err != nil {
 				return err
 			}
 
@@ -37,6 +37,7 @@ func GetCmdBuyName(cdc *codec.Codec) *cobra.Command {
 			if err != nil {
 				return err
 			}
+
 			cliCtx.PrintResponse = true
 
 			return utils.CompleteAndBroadcastTxCLI(txBldr, cliCtx, []sdk.Msg{msg})
@@ -67,6 +68,7 @@ func GetCmdSetName(cdc *codec.Codec) *cobra.Command {
 
 			cliCtx.PrintResponse = true
 
+			// return utils.CompleteAndBroadcastTxCLI(txBldr, cliCtx, msgs)
 			return utils.CompleteAndBroadcastTxCLI(txBldr, cliCtx, []sdk.Msg{msg})
 		},
 	}
