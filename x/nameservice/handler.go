@@ -3,7 +3,7 @@ package nameservice
 import (
 	"fmt"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/olsenmatthew/cosmos-namespace/types"
 )
 
 // NewHandler returns a handler for "nameservice" type messages.

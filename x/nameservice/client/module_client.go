@@ -1,8 +1,8 @@
 package client
 
 import (
-	"github.com/cosmos/cosmos-sdk/client"
-	nameservicecmd "github.com/cosmos/sdk-application-tutorial/x/nameservice/client/cli"
+	"github.com/olsenmatthew/cosmos-namespace/client"
+	nameservicecmd "github.com/olsenmatthew/sdk-application-tutorial/x/nameservice/client/cli"
 	"github.com/spf13/cobra"
 	amino "github.com/tendermint/go-amino"
 )
