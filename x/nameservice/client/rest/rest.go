@@ -7,7 +7,7 @@ import (
 	"github.com/olsenmatthew/cosmos-namespace/client/context"
 	clientrest "github.com/olsenmatthew/cosmos-namespace/client/rest"
 	"github.com/olsenmatthew/cosmos-namespace/codec"
-	sdk "github.com/comos/cosmos-namespace/types"
+	sdk "github.com/olsenmatthew/cosmos-namespace/types"
 	"github.com/olsenmatthew/cosmos-namespace/types/rest"
 	"github.com/olsenmatthew/sdk-application-tutorial/x/nameservice"
 
